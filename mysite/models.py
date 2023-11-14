@@ -21,10 +21,24 @@ class Alternatif(models.Model):
     namaA = models.TextField()
     
     def __str__(self):
-        return self.nimA + ' - ' + self.namaA
+        return self.nimA
     
     class Meta:
         verbose_name_plural = 'Alternatif'
+        
+class SubAlternatif(models.Model):
+    codeNim = models.ForeignKey(Alternatif, on_delete=models.CASCADE)
+    namaSA = models.CharField(max_length=255)
+    k1sa = models.CharField(max_length=100 ,blank=True, null=True)
+    k2sa = models.CharField(max_length=100 ,blank=True, null=True)
+    k3sa = models.CharField(max_length=100 ,blank=True, null=True)
+    k4sa = models.CharField(max_length=100 ,blank=True, null=True)
+    
+    def __str__(self):
+        return self.namaSA
+    
+    class Meta:
+        verbose_name_plural = 'sub-Alternatif'
         
 
 class SubKriteria(models.Model):

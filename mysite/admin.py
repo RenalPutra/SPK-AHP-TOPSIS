@@ -10,7 +10,11 @@ class SubKriteriaAdmin(admin.ModelAdmin):
 
 class AlternatifAdmin(admin.ModelAdmin):
     list_display = ['nimA', "namaA"]
+
+class SubAlternatifAdmin(admin.ModelAdmin):
+    list_display = ['codeNim', 'namaSA',"k1sa", "k2sa", "k3sa", "k4sa"]
     
 admin.site.register(Kriteria, KriteriaAdmin)
 admin.site.register(SubKriteria, SubKriteriaAdmin)
 admin.site.register(Alternatif, AlternatifAdmin)
+admin.site.register(SubAlternatif, SubAlternatifAdmin)

@@ -171,6 +171,31 @@ def deleteAlternatif(request, id):
     Alternatif.objects.get(id=id).delete()
     return redirect(alternatifTabel)
 
+def subAlternatifTabel(request):
+    template_name = "subalternatif.html"
+    alternatif_objects = Alternatif.objects.all()
+    
+    for d in alternatif_objects:
+        sub_alternatif, created = SubAlternatif.objects.get_or_create(
+            codeNim=d,
+            defaults={'namaSA': d.namaA}
+        )
+        
+    
+        if not created and sub_alternatif.namaSA != d.namaA:
+            sub_alternatif.namaSA = d.namaA
+            sub_alternatif.save()
+    
+    sub_alternatif_objects = SubAlternatif.objects.all()
+    
+    context = {
+        'nama': 'SUB-ALTERNATIF',
+        'subAlternatif': sub_alternatif_objects
+    }
+    return render(request, template_name, context)
+
+
+
 def login(request):
     template_name = "login.html"
     context = {
