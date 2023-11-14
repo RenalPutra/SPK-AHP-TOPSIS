@@ -1,0 +1,61 @@
+{% extends "base.html" %} {% load static %} {% block content %}
+<div class="page-heading text-center">
+  <h3>{{nama}}</h3>
+</div>
+
+<section class="section">
+  <div class="card">
+    <div class="card-header d-flex align-items-center">
+      <h5 class="card-title">Data Kriteria</h5>
+      <button type="button" class="btn btn-primary ms-5">
+        <a
+          href="{% url 'formKriteria' %}"
+          class="text-decoration-none text-white fw-bold"
+          >Tambah Kriteria</a
+        >
+      </button>
+    </div>
+    <div class="card-body">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Code</th>
+            <th>Nama Kriteria</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for k in kriteria %}
+
+          <tr>
+            <td>{{ k.codeK }}</td>
+            <td>{{ k.namaK }}</td>
+
+            <td class="d-flex gap-3">
+              <button class="btn btn-warning p-1">
+                <a
+                  href="{% url 'formEditKriteria' k.id %}"
+                  class="text-decoration-none text-white"
+                  ><i class="bi bi-pencil-square"></i
+                ></a>
+              </button>
+              <button class="btn btn-danger p-1">
+                <a
+                  href="{% url 'deleteKriteria' k.id %}"
+                  class="text-decoration-none text-white"
+                >
+                  <i class="bi bi-trash3-fill"></i
+                ></a>
+              </button>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+{% endblock content %} {% block js %}
+<script src="{% static 'assets/extensions/simple-datatables/umd/simple-datatables.js' %}"></script>
+<script src="{% static 'assets/static/js/pages/simple-datatables.js' %}"></script>
+{% endblock js %}

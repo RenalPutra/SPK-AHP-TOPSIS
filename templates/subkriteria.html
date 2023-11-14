@@ -1,0 +1,133 @@
+{% extends "base.html" %} {% load static %} {% block content %}
+<div class="page-heading text-center">
+  <h3>{{nama}}</h3>
+</div>
+
+<section class="section">
+  <div class="card">
+    <div class="card-header align-items-center">
+      <h5 class="card-title">Data Sub-Kriteria</h5>
+      {% for message in messages %} {% if message.tags == "error" %}
+      <div class="alert alert-danger text-center" role="alert">
+        {{ message }}
+      </div>
+      {% else %}
+      <div class="alert alert-success text-center" role="alert">
+        {{ message }}
+      </div>
+      {% endif %} {% endfor %}
+
+      <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="d-flex">
+          <div class="me-1 w-25">
+            <select
+              class="form-select"
+              name="kolom"
+              aria-label="Default select example"
+            >
+              <option selected>kolom</option>
+              {% for k in kriteria %}
+              <option value="{{ k.codeK }}">{{ k.codeK }}</option>
+
+              {% endfor %}
+            </select>
+          </div>
+          <div class="mx-1 w-25">
+            <select
+              class="form-select"
+              name="bobot"
+              aria-label="Default select example"
+            >
+              <option selected>nilai bobot</option>
+              <option value="1">1 - sama penting dengan</option>
+              <option value="2">
+                2 - mendekati sedikit lebih penting dari
+              </option>
+              <option value="3">3 - sedikit lebih penting dari</option>
+              <option value="4">4 - mendekati sangat penting dari</option>
+              <option value="5">5 - lebih penting dari</option>
+              <option value="6">6 - mendekati sangat penting dari</option>
+              <option value="7">7 - sangat penting dari</option>
+              <option value="8">8 - mendekati mutlak dari</option>
+              <option value="9">9 - mutlak sangat penting dari</option>
+            </select>
+          </div>
+          <div class="mx-1 w-25">
+            <select
+              class="form-select"
+              name="baris"
+              aria-label="Default select example"
+            >
+              <option selected>baris</option>
+              {% for k in kriteria %}
+              <option value="{{ k.codeK }}">{{ k.codeK }}</option>
+
+              {% endfor %}
+            </select>
+          </div>
+          <button type="submit" class="btn btn-secondary p-1 ms-2">
+            <i class="bi bi-pencil-square me-1"></i>Ubah
+          </button>
+        </div>
+      </form>
+    </div>
+    <div class="card-body">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Code</th>
+            <th>K1</th>
+            <th>K2</th>
+            <th>K3</th>
+            <th>K4</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for sk in subkriteria %}
+          <tr>
+            <td>{{ sk.codeKF.codeK }}</td>
+
+            {% if sk.k1 == "1" %}
+            <td class="bg-success">{{ sk.k1|default_if_none:"" }}</td>
+            {% elif sk.k1 in "3 5 2" %}
+            <td class="bg-danger text-white">{{ sk.k1|default_if_none:"" }}</td>
+            {% else %}
+            <td>{{ sk.k1|default_if_none:"" }}</td>
+            {% endif %} {% if sk.k2 == "1" %}
+            <td class="bg-success">{{ sk.k2|default_if_none:"" }}</td>
+            {% elif sk.k2 in "3 5 2" %}
+            <td class="bg-danger text-white">{{ sk.k2|default_if_none:"" }}</td>
+            {% else %}
+            <td>{{ sk.k2|default_if_none:"" }}</td>
+            {% endif %} {% if sk.k3 == "1" %}
+            <td class="bg-success">{{ sk.k3|default_if_none:"" }}</td>
+            {% elif sk.k3 in "3 5 2" %}
+            <td class="bg-danger text-white">{{ sk.k3|default_if_none:"" }}</td>
+            {% else %}
+            <td>{{ sk.k3|default_if_none:"" }}</td>
+            {% endif %} {% if sk.k4 == "1" %}
+            <td class="bg-success">{{ sk.k4|default_if_none:"" }}</td>
+            {% elif sk.k4 in "3 5 2" %}
+            <td class="bg-danger text-white">{{ sk.k4|default_if_none:"" }}</td>
+            {% else %}
+            <td>{{ sk.k4|default_if_none:"" }}</td>
+            {% endif %}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <h6 class="mt-3">Keterangan Kriteria</h6>
+      <ul>
+        <li>K1 = IPK</li>
+        <li>K2 = MASA STUDI</li>
+        <li>K3 = PRESTASI</li>
+        <li>K4 = TUGAS AKHIR KIAN</li>
+      </ul>
+    </div>
+  </div>
+</section>
+{% endblock content %} {% block js %}
+<script src="{% static 'assets/extensions/simple-datatables/umd/simple-datatables.js' %}"></script>
+<script src="{% static 'assets/static/js/pages/simple-datatables.js' %}"></script>
+{% endblock js %}
