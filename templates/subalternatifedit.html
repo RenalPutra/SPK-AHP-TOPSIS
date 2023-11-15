@@ -18,33 +18,58 @@
               <div class="form-body">
                 <div class="row">
                   <div class="col-md-4">
-                    <label for="nimA">NIM</label>
+                    <label for="K1">K1 - IPK</label>
                   </div>
                   <div class="col-md-8 form-group">
                     <input
                       type="text"
-                      id="nimA"
+                      id="K1"
                       class="form-control"
-                      name="nimA"
-                      value="{{alter_value.nimA}}"
+                      name="K1"
+                      value="{{subalter_value.k1sa}}"
                     />
                   </div>
                   <div class="col-md-4">
-                    <label for="namaA">Nama Mahasiswa</label>
+                    <label for="K2">K2 - MASA STUDI</label>
                   </div>
                   <div class="col-md-8 form-group">
                     <input
                       type="text"
-                      id="namaA"
+                      id="K2"
                       class="form-control"
-                      name="namaA"
-                      value="{{alter_value.namaA}}"
+                      name="K2"
+                      value="{{subalter_value.k2sa}}"
                     />
                   </div>
+                  <div class="col-md-4">
+                    <label for="K3">K3 - PRESTASI</label>
+                  </div>
+                  <div class="col-md-8 form-group">
+                    <input
+                      type="text"
+                      id="K3"
+                      class="form-control"
+                      name="K3"
+                      value="{{subalter_value.k3sa}}"
+                    />
+                  </div>
+                  <div class="col-md-4">
+                    <label for="K4">K4 - TUGAS AKHIR</label>
+                  </div>
+                  <div class="col-md-8 form-group">
+                    <input
+                      type="text"
+                      id="K4"
+                      class="form-control"
+                      name="K4"
+                      value="{{subalter_value.k4sa}}"
+                    />
+                  </div>
+
                   <div class="col-sm-12 d-flex pt-4">
                     <button type="button" class="btn btn-danger mb-1 me-auto">
                       <a
-                        href="{% url 'alternatif' %}"
+                        href="{% url 'subalternatif' %}"
                         class="text-decoration-none text-white"
                         >Cancel</a
                       >

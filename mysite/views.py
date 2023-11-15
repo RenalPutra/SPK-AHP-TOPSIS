@@ -29,9 +29,7 @@ def subkriteriaTabel(request):
         baris = request.POST.get('baris')
        
         matrix_baris = SubKriteria.objects.get(codeKF=baris)
-        
-    
-        
+
         if kolom == 'K1':
             if baris == 'K2':
                 matrix_baris.k1 = round(int(subkriteriaT[0].k1)/int(bobot), 3)
@@ -191,6 +189,27 @@ def subAlternatifTabel(request):
     context = {
         'nama': 'SUB-ALTERNATIF',
         'subAlternatif': sub_alternatif_objects
+    }
+    return render(request, template_name, context)
+
+def formEditSubAlternatif(request, id):
+    subalter_id = SubAlternatif.objects.get(id=id)
+    template_name = "subalternatifedit.html"
+    if request.method == 'POST':
+        k1 = request.POST.get('K1')
+        k2 = request.POST.get('K2')
+        k3 = request.POST.get('K3')
+        k4 = request.POST.get('K4')
+   
+        subalter_id.k1sa = k1
+        subalter_id.k2sa = k2
+        subalter_id.k3sa = k3
+        subalter_id.k4sa = k4
+        subalter_id.save()
+        return redirect(subAlternatifTabel)
+    context = {
+        'nama' : 'Edit Sub-Alternatif',
+        'subalter_value' : subalter_id,
     }
     return render(request, template_name, context)
 
