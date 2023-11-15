@@ -14,5 +14,6 @@ urlpatterns = [
     path('alternatif/form/delete/<int:id>', deleteAlternatif, name='deleteAlternatif'),
     path('subalternatif/', subAlternatifTabel, name='subalternatif'),
     path('subalternatif/edit/<int:id>', formEditSubAlternatif, name='editsubalternatif'),
+    path('ahptopsis/', hasilahptopsis, name='hasilahptopsis'),
     path('login', login, name='login'),
 ]

@@ -213,6 +213,15 @@ def formEditSubAlternatif(request, id):
     }
     return render(request, template_name, context)
 
+def hasilahptopsis(request):
+    template_name = "hasilahptopsis.html"
+    kriteria = Kriteria.objects.all()
+    context = {
+        'nama' : 'AHP',
+        'kriteria' : kriteria
+    }
+    return render(request, template_name, context)
+
 
 
 def login(request):
