@@ -53,3 +53,33 @@ class SubKriteria(models.Model):
     
     class Meta:
         verbose_name_plural = 'sub-Kriteria'
+        
+# AHP
+class BobotPrioritas(models.Model):
+    codeBF = models.ForeignKey(Kriteria, on_delete=models.CASCADE, to_field='codeK', unique=False)
+    bobotPrio = models.TextField(blank=True, null=True)
+    k1 = models.TextField(blank=True, null=True)
+    k2 = models.TextField(blank=True, null=True)
+    k3 = models.TextField(blank=True, null=True)
+    k4 = models.TextField(blank=True, null=True)
+    
+    def __str__(self):
+        return self.codeBF.codeK
+    
+    class Meta:
+        verbose_name_plural = 'Bobot-Prioritas'
+
+class BobotKonsistensi(models.Model):
+    codeBKF = models.ForeignKey(Kriteria, on_delete=models.CASCADE)
+    k1 = models.FloatField(default=0, blank=True, null=True)
+    k2 = models.FloatField(default=0, blank=True, null=True)
+    k3 = models.FloatField(default=0, blank=True, null=True)
+    k4 = models.FloatField(default=0, blank=True, null=True) 
+    bobotkons = models.FloatField(default=0, blank=True, null=True)
+     # Sesuaikan dengan tipe data yang sesuai
+
+    def __str__(self):
+        return self.codeBF.namaK
+    
+    class Meta:
+        verbose_name_plural = 'Bobot-konsistensi'

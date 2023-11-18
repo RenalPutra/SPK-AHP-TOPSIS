@@ -3,6 +3,182 @@
   <h3>{{nama}}</h3>
 </div>
 
-<h1>AHPTOPSIS HASIL</h1>
+<section class="section">
+  <div class="card">
+    <div class="card-header align-items-center">
+      <h5 class="card-title">Matriks Perbandingan Kriteria</h5>
+    </div>
+    <div class="card-body">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th></th>
+            <th>K1</th>
+            <th>K2</th>
+            <th>K3</th>
+            <th>K4</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for subKrit in subkriteria %}
 
-{% endblock content %}
+          <tr>
+            <td>{{ subKrit.codeKF.codeK }}</td>
+            <td>{{ subKrit.k1 }}</td>
+            <td>{{ subKrit.k2 }}</td>
+            <td>{{ subKrit.k3 }}</td>
+            <td>{{ subKrit.k4 }}</td>
+          </tr>
+          {% endfor %}
+          <tr>
+            <td>Total</td>
+            {% for t in total %}
+            <td>{{ t }}</td>
+            {% endfor %}
+          </tr>
+        </tbody>
+      </table>
+      <h6 class="mt-3">Keterangan Kriteria</h6>
+      <ul>
+        <li>K1 = IPK</li>
+        <li>K2 = MASA STUDI</li>
+        <li>K3 = PRESTASI</li>
+        <li>K4 = TUGAS AKHIR KIAN</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header align-items-center">
+      <h5 class="card-title">Matriks Bobot Prioritas Kriteria</h5>
+    </div>
+    <div class="card-body">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th></th>
+            <th>K1</th>
+            <th>K2</th>
+            <th>K3</th>
+            <th>K4</th>
+            <th>Bobot Prioritas</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for bp in bprall %}
+          <tr>
+            <td>{{ bp.codeBF.codeK }}</td>
+            <td>{{ bp.k1 }}</td>
+            <td>{{ bp.k2 }}</td>
+            <td>{{ bp.k3 }}</td>
+            <td>{{ bp.k4 }}</td>
+            <td>{{ bp.bobotPrio|default_if_none:"" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <h6 class="mt-3">Keterangan Kriteria</h6>
+      <ul>
+        <li>K1 = IPK</li>
+        <li>K2 = MASA STUDI</li>
+        <li>K3 = PRESTASI</li>
+        <li>K4 = TUGAS AKHIR KIAN</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header align-items-center">
+      <h5 class="card-title">Matriks Konsistensi Kriteria</h5>
+    </div>
+    <div class="card-body">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th></th>
+            <th>K1</th>
+            <th>K2</th>
+            <th>K3</th>
+            <th>K4</th>
+            <th>Bobot</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for konsen in bkonsen %}
+          <tr>
+            <td>{{ konsen.codeBKF.codeK }}</td>
+            <td>{{ konsen.k1 }}</td>
+            <td>{{ konsen.k2 }}</td>
+            <td>{{ konsen.k3 }}</td>
+            <td>{{ konsen.k4 }}</td>
+            <td>{{ konsen.bobotkons }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <h6>Tabel ration index berdasarkan ordo matriks</h6>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Ordo Matriks</th>
+            <th>1</th>
+            <th>2</th>
+            <th>3</th>
+            <th>4</th>
+            <th>5</th>
+            <th>6</th>
+            <th>7</th>
+            <th>8</th>
+            <th>9</th>
+            <th>10</th>
+            <th>11</th>
+            <th>12</th>
+            <th>13</th>
+            <th>14</th>
+            <th>15</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Ratio Index</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0.58</td>
+            <td>0.9</td>
+            <td>1.12</td>
+            <td>1.24</td>
+            <td>1.32</td>
+            <td>1.41</td>
+            <td>1.46</td>
+            <td>1.49</td>
+            <td>1.51</td>
+            <td>1.48</td>
+            <td>1.56</td>
+            <td>1.57</td>
+            <td>1.59</td>
+          </tr>
+        </tbody>
+      </table>
+      <h6 class="mt-3">Keterangan Kriteria</h6>
+      <ul>
+        <li>K1 = IPK</li>
+        <li>K2 = MASA STUDI</li>
+        <li>K3 = PRESTASI</li>
+        <li>K4 = TUGAS AKHIR KIAN</li>
+      </ul>
+      <h6 class="mt-3">Perhitungan CI, RI & RI</h6>
+      <ul>
+        <li>Consistency Index : {{ CI }}</li>
+        <li>Ratio Index : {{ R }}</li>
+        <li>Consistency Ratio : {{ CR }} 
+          {% if CR < 0.1 %}
+          (konsisten)
+          {% else %}
+            (tidak konsisten)
+        {% endif %}</li>
+      </ul>
+    </div>
+  </div>
+</section>
+{% endblock content %} {% block js %}
+<script src="{% static 'assets/extensions/simple-datatables/umd/simple-datatables.js' %}"></script>
+<script src="{% static 'assets/static/js/pages/simple-datatables.js' %}"></script>
+{% endblock js %}

@@ -13,8 +13,15 @@ class AlternatifAdmin(admin.ModelAdmin):
 
 class SubAlternatifAdmin(admin.ModelAdmin):
     list_display = ['codeNim', 'namaSA',"k1sa", "k2sa", "k3sa", "k4sa"]
+class BobotPrioritasAdmin(admin.ModelAdmin):
+    list_display = ['codeBF', 'bobotPrio',"k1", "k2", "k3", "k4"]
+
+class BobotKonsistensiAdmin(admin.ModelAdmin):
+    list_display = ['codeBKF',"k1", "k2", "k3", "k4", "bobotkons"]
     
 admin.site.register(Kriteria, KriteriaAdmin)
 admin.site.register(SubKriteria, SubKriteriaAdmin)
 admin.site.register(Alternatif, AlternatifAdmin)
 admin.site.register(SubAlternatif, SubAlternatifAdmin)
+admin.site.register(BobotPrioritas, BobotPrioritasAdmin)
+admin.site.register(BobotKonsistensi, BobotKonsistensiAdmin)
