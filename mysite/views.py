@@ -1,4 +1,6 @@
 from django.shortcuts import render, redirect
+import math
+import numpy as np
 from django.contrib import messages
 from .models import *
 
@@ -90,10 +92,12 @@ def formKriteria(request):
     if request.method == 'POST':
         namaCode = request.POST.get('namaCode')
         namaKriteria = request.POST.get('namaKriteria')
+        kelasK = request.POST.get('kelasK')
    
         Kriteria.objects.create(
            codeK=namaCode,
            namaK=namaKriteria, 
+           kelasK=kelasK
         )
         return redirect(kriteriaTabel)
     context = {
@@ -107,9 +111,11 @@ def formEditKriteria(request, id):
     if request.method == 'POST':
         namaCode = request.POST.get('namaCode')
         namaKriteria = request.POST.get('namaKriteria')
+        kelasK = request.POST.get('kelasK')
         
         kriteria_id.codeK = namaCode
         kriteria_id.namaK = namaKriteria
+        kriteria_id.kelasK = kelasK
         kriteria_id.save()
         
         return redirect(kriteriaTabel)
@@ -137,10 +143,12 @@ def formAlternatif(request):
     if request.method == 'POST':
         nimA = request.POST.get('nimA')
         namaA = request.POST.get('namaA')
+        
    
         Alternatif.objects.create(
            nimA=nimA,
            namaA=namaA, 
+          
         )
         return redirect(alternatifTabel)
     context = {
@@ -154,9 +162,11 @@ def formEditAlternatif(request, id):
     if request.method == 'POST':
         nimA = request.POST.get('nimA')
         namaA = request.POST.get('namaA')
+     
    
         alter_id.nimA = nimA
         alter_id.namaA =namaA
+       
         alter_id.save()
         return redirect(alternatifTabel)
     context = {
@@ -217,6 +227,8 @@ def hasilahptopsis(request):
     template_name = "hasilahptopsis.html"
     kriteria = Kriteria.objects.all()
     subkriteriaT = SubKriteria.objects.all()
+    SubAlternatifA = SubAlternatif.objects.all()
+    alternatif = Alternatif.objects.all()
     # total code untuk Matriks Perbandingan Kriteria
     arrSub1  = []
     arrSub2  = []
@@ -228,7 +240,7 @@ def hasilahptopsis(request):
         arrSub2.append(float(i.k2))
         arrSub3.append(float(i.k3))
         arrSub4.append(float(i.k4))
-    totalarr.extend([sum(arrSub1), sum(arrSub2), sum(arrSub3), sum(arrSub4)])  
+    totalarr.extend([round(sum(arrSub1),3), round(sum(arrSub2),3), round(sum(arrSub3),3), round(sum(arrSub4),3)])  
     
     # Matriks bobot prioritas
     BPr1 = []
@@ -249,8 +261,12 @@ def hasilahptopsis(request):
         BPr4.append(float(br4))
 
     allBr = [BPr1, BPr2, BPr3, BPr4]
+    
+    print(allBr)
 
     transposed_allBr = list(map(list, zip(*allBr)))
+    
+    print(transposed_allBr)
 
     realBpr = [
         round(sum(transposed_allBr[0]) / 4, 3),
@@ -259,7 +275,6 @@ def hasilahptopsis(request):
         round(sum(transposed_allBr[3]) / 4, 3)
     ]
     # print(realBpr)
-    
 
   
     for j, br_data in zip(kriteria, transposed_allBr):
@@ -316,7 +331,6 @@ def hasilahptopsis(request):
             }
         )
         
-
         if not created :
             boboKN, created = BobotKonsistensi.objects.update_or_create(
                 codeBKF=j,
@@ -349,8 +363,6 @@ def hasilahptopsis(request):
     listBobotKon.extend([BKn1,BKn2,BKn3,BKn4])
     transposed_konsBot = list(map(list, zip(*listBobotKon)))
     
-    
-    
     realBKN = [
         round(sum(transposed_konsBot[0]) / listKons[0], 3),
         round(sum(transposed_konsBot[1]) / listKons[1], 3),
@@ -358,8 +370,7 @@ def hasilahptopsis(request):
         round(sum(transposed_konsBot[3]) / listKons[3], 3)
     ]
     
-   
-        
+          
     for a, b in zip(kriteria, realBKN):
         objects = BobotKonsistensi.objects.filter(codeBKF=a)
         for obj in objects:
@@ -367,7 +378,7 @@ def hasilahptopsis(request):
             obj.save()
     
     # perhitungan CI, RI, CR
-    print(len(kriteria))
+  
     lambdad = sum(realBKN)/len(kriteria)
     CI = round((lambdad-len(kriteria))/(len(kriteria)-1),3)
     if len(kriteria) == 1:
@@ -402,11 +413,217 @@ def hasilahptopsis(request):
         R = 1.59
     
     CR = round(CI/R,3)
-    print(CR)
-        
-            
-
   
+    
+    
+    # TOPSIS PERHGITUNGAN --
+    
+    # Normlisasi
+    
+    topAlter1  = []
+    topAlter2  = []
+    topAlter3  = []
+    topAlter4  = []
+    totaltopAlter = []
+    for index, i in enumerate(SubAlternatifA) :
+        topAlter1.append(float(i.k1sa))
+        topAlter2.append(float(i.k2sa))
+        topAlter3.append(float(i.k3sa))
+        topAlter4.append(float(i.k4sa))
+    totaltopAlter.extend([round(math.sqrt(sum(np.power(topAlter1, 2))),3), round(math.sqrt(sum(np.power(topAlter2, 2))),3), round(math.sqrt(sum(np.power(topAlter3, 2))),3), round(math.sqrt(sum(np.power(topAlter4,2))),3)])
+    
+   
+    
+    
+    for j in SubAlternatifA:
+        topNor, created = NormalisasiTopsis.objects.get_or_create(
+            namaAlter=j,
+            defaults={
+                'k1': 0,
+                'k2': 0,
+                'k3': 0,
+                'k4': 0,
+          
+            }
+        )
+        
+        if not created :
+            topNor, created = NormalisasiTopsis.objects.update_or_create(
+                namaAlter=j,
+                defaults={
+                    'k1': round(float(j.k1sa)/totaltopAlter[0],3),
+                    'k2': round(float(j.k2sa)/totaltopAlter[1],3),
+                    'k3': round(float(j.k3sa)/totaltopAlter[2],3),
+                    'k4': round(float(j.k4sa)/totaltopAlter[3],3),
+                }
+            )
+        topNor.save()
+    topNormal = NormalisasiTopsis.objects.all()
+    
+    # Normlisasi-Terbobot
+    
+    for j,k in zip(alternatif, topNormal):
+        bobotNor, created = NormalBobotTopsis.objects.get_or_create(
+            nimAlter=j,
+            defaults={
+                'k1': 0,
+                'k2': 0,
+                'k3': 0,
+                'k4': 0,
+          
+            }
+        )
+        
+        if not created :
+            bobotNor, created = NormalBobotTopsis.objects.update_or_create(
+                nimAlter=j,
+                defaults={
+                    'k1': round(float(k.k1)*realBpr[0],3),
+                    'k2': round(float(k.k2)*realBpr[1],3),
+                    'k3': round(float(k.k3)*realBpr[2],3),
+                    'k4': round(float(k.k4)*realBpr[3],3),
+                }
+            )
+        bobotNor.save()
+    bobotNormal = NormalBobotTopsis.objects.all()
+    
+    # Matriks Solusi Ideal
+
+    solusi = ["Positif", "Negatif"]
+
+    Tops1 = [float(j.k1) for j in bobotNormal]
+    Tops2 = [float(j.k2) for j in bobotNormal]
+    Tops3 = [float(j.k3) for j in bobotNormal]
+    Tops4 = [float(j.k4) for j in bobotNormal]
+
+    kriteria_map = {krit.codeK: krit.kelasK for krit in kriteria}
+
+    for status in solusi:
+
+        defaults = {
+            'k1': max(Tops1) if (kriteria_map['K1'] == "Benefit" and status == "Positif") or (kriteria_map['K1'] == "Cost" and status == "Negatif") else min(Tops1),
+            'k2': max(Tops2) if (kriteria_map['K2'] == "Benefit" and status == "Positif") or (kriteria_map['K2'] == "Cost" and status == "Negatif") else min(Tops2),
+            'k3': max(Tops3) if (kriteria_map['K3'] == "Benefit" and status == "Positif") or (kriteria_map['K3'] == "Cost" and status == "Negatif") else min(Tops3),
+            'k4': max(Tops4) if (kriteria_map['K4'] == "Benefit" and status == "Positif") or (kriteria_map['K4'] == "Cost" and status == "Negatif") else min(Tops4),
+        }
+        
+        TopsisSolusi.objects.update_or_create(
+            status=status,
+            defaults=defaults
+        )
+                
+
+    topSolusi = TopsisSolusi.objects.all()
+    
+    # Jarak solusi dan nilai preferensi topsis
+    Jsp1 = []
+    Jsp2 = []
+    Jsp3 = []
+    Jsp4 = []
+    print("")
+    print("")
+    print("")
+    for index, j in enumerate(bobotNormal):
+        Jsp1.append(float(j.k1))
+        Jsp2.append(float(j.k2))
+        Jsp3.append(float(j.k3))
+        Jsp4.append(float(j.k4))
+
+    allJsp = np.array([Jsp1, Jsp2, Jsp3, Jsp4])
+    
+   
+
+    transposed_allJsp = list(map(list, zip(*allJsp)))
+    
+    print("terbobot : ",transposed_allJsp)
+    
+    sol1 = []
+    sol2 = []
+    sol3 = []
+    sol4 = []
+    for index, j in enumerate(topSolusi):
+        sol1.append(float(j.k1))
+        sol2.append(float(j.k2))
+        sol3.append(float(j.k3))
+        sol4.append(float(j.k4))
+    realSolall = np.array([sol1, sol2, sol3, sol4])
+    
+    
+    transposed_allsol = list(map(list, zip(*realSolall)))
+    
+    print("solusi :",transposed_allsol)
+    print("\n")
+    resultPlus = []
+    resultMin = []
+    for j in transposed_allJsp:
+        kurang = round(math.sqrt(sum(np.power(np.subtract(transposed_allsol[0], j),2))),3)
+        resultPlus.append(kurang)
+        
+    for j in transposed_allJsp:
+        kurang = round(math.sqrt(sum(np.power(np.subtract(j, transposed_allsol[1]),2))),3)
+        resultMin.append(kurang)
+    
+    formula = resultMin/np.add(resultMin, resultPlus)
+    preferensi = [round(num, 3) for num in formula]
+         
+    print("resultPlus : ",resultPlus)
+    print("resultMin : ",resultMin)
+    print("preferensi : ",preferensi)
+    
+
+    for j, c, l ,m in zip(alternatif, resultPlus, resultMin, preferensi):
+        jasol, created = JarakPrefTopsis.objects.get_or_create(
+            nimAlter=j,
+            defaults={
+                'positif': 0,
+                'negatif': 0,
+                'preferensi': 0,
+               
+          
+            }
+        )
+        
+        if not created :
+            jasol, created = JarakPrefTopsis.objects.update_or_create(
+                nimAlter=j,
+                defaults={
+                    'positif': c,
+                    'negatif': l,
+                    'preferensi': m,
+                }
+            )
+        jasol.save()
+    jasolPre = JarakPrefTopsis.objects.all()
+    
+    # Ranking
+    
+
+    nilai_unik = sorted(set(preferensi), reverse=True)
+    ranking_map = {num: rank for rank, num in enumerate(nilai_unik, start=1)}
+    ranking_asli = [ranking_map[num] for num in preferensi]
+    
+    for j, c, l in zip(alternatif, preferensi, ranking_asli):
+        rankTop, created = RankingTopsis.objects.get_or_create(
+            nimAlter=j,
+            defaults={
+                'preferensi': 0,
+                'rank': 0,
+               
+          
+            }
+        )
+        
+        if not created :
+            rankTop, created = RankingTopsis.objects.update_or_create(
+                nimAlter=j,
+                defaults={
+                   'preferensi': c,
+                    'rank': l,
+                }
+            )
+        rankTop.save()
+    rankTopAkhir = RankingTopsis.objects.all()
+    
     context = {
         'nama' : 'PERHITUNGAN',
         'kriteria' : kriteria,
@@ -417,7 +634,13 @@ def hasilahptopsis(request):
         "bkonsen" : bkonsen,
         "CI" : CI,
         "R" : R,
-        "CR" : CR
+        "CR" : CR,
+        "subalternatif" : SubAlternatifA,
+        "topnormal" : topNormal,
+        "bobotNormal" : bobotNormal,
+        "topSolusi" : topSolusi,
+        "jasolPre" : jasolPre,
+        "rankTopAkhir" : rankTopAkhir
       
     }
     return render(request, template_name, context)

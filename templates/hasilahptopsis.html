@@ -1,6 +1,6 @@
 {% extends "base.html" %} {% load static %} {% block content %}
 <div class="page-heading text-center">
-  <h3>{{nama}}</h3>
+  <h3>{{nama}} AHP</h3>
 </div>
 
 <section class="section">
@@ -168,13 +168,180 @@
       <ul>
         <li>Consistency Index : {{ CI }}</li>
         <li>Ratio Index : {{ R }}</li>
-        <li>Consistency Ratio : {{ CR }} 
-          {% if CR < 0.1 %}
-          (konsisten)
-          {% else %}
-            (tidak konsisten)
-        {% endif %}</li>
+        <li>
+          Consistency Ratio : {{ CR }} {% if CR < 0.1 %} (konsisten) {% else %}
+          (tidak konsisten) {% endif %}
+        </li>
       </ul>
+    </div>
+  </div>
+  <div class="page-heading text-center">
+    <h3>{{nama}} TOPSIS</h3>
+  </div>
+  <div class="card">
+    <div class="card-header align-items-center">
+      <h5 class="card-title">Hasil Analisa (Topsis)</h5>
+    </div>
+    <div class="card-body">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th></th>
+            {% for k in kriteria %}
+            <th>{{ k.namaK }}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for alter in subalternatif %}
+          <tr>
+            <td>{{ alter.namaSA }}</td>
+            <td>{{ alter.k1sa }}</td>
+            <td>{{ alter.k2sa }}</td>
+            <td>{{ alter.k3sa }}</td>
+            <td>{{ alter.k4sa }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header align-items-center">
+      <h5 class="card-title">Normalisasi Topsis</h5>
+    </div>
+    <div class="card-body">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th></th>
+            {% for k in kriteria %}
+            <th>{{ k.codeK }}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for normal in topnormal %}
+          <tr>
+            <td>{{ normal.namaAlter.namaSA }}</td>
+            <td>{{ normal.k1 }}</td>
+            <td>{{ normal.k2 }}</td>
+            <td>{{ normal.k3 }}</td>
+            <td>{{ normal.k4 }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header align-items-center">
+      <h5 class="card-title">Normalisasi Terbobot Topsis</h5>
+    </div>
+    <div class="card-body">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th></th>
+            {% for k in kriteria %}
+            <th>{{ k.codeK }}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for btnormal in bobotNormal %}
+          <tr>
+            <td>{{ btnormal.nimAlter }}</td>
+            <td>{{ btnormal.k1 }}</td>
+            <td>{{ btnormal.k2 }}</td>
+            <td>{{ btnormal.k3 }}</td>
+            <td>{{ btnormal.k4 }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header align-items-center">
+      <h5 class="card-title">Matriks Solusi Ideal</h5>
+    </div>
+    <div class="card-body">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th></th>
+            {% for k in kriteria %}
+            <th>{{ k.codeK }}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for top in topSolusi %}
+          <tr>
+            <td>{{ top.status }}</td>
+            <td>{{ top.k1 }}</td>
+            <td>{{ top.k2 }}</td>
+            <td>{{ top.k3 }}</td>
+            <td>{{ top.k4 }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header align-items-center">
+      <h5 class="card-title">Jarak Solusi & Nilai Preferensi</h5>
+    </div>
+    <div class="card-body">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Nim</th>
+            <th>Positif</th>
+            <th>Negatif</th>
+            <th>Preferensi</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for j in jasolPre %}
+          <tr>
+            <td>{{ j.nimAlter }}</td>
+            <td>{{ j.positif }}</td>
+            <td>{{ j.negatif }}</td>
+            <td>{{ j.preferensi }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header align-items-center">
+      <h5 class="card-title">Perankingan</h5>
+    </div>
+    <div class="card-body">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Nim - Mahasiswa</th>
+            <th>Preferensi Akhir</th>
+            <th>Rank</th>
+         
+          </tr>
+        </thead>
+        <tbody>
+          {% for j in rankTopAkhir %}
+          <tr>
+            <td>{{ j.nimAlter }} - {{ j.nimAlter.namaA }}</td>
+            <td>{{ j.preferensi }}</td>
+            <td>{{ j.rank }}</td>
+            
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
   </div>
 </section>

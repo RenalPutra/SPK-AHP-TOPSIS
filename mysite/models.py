@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 class Kriteria(models.Model):
     codeK = models.TextField(unique=True)
     namaK = models.TextField()
+    kelasK = models.TextField(blank=True, null=True)
     
     def __str__(self):
         return self.codeK + ' - ' + self.namaK
@@ -17,14 +18,18 @@ class Kriteria(models.Model):
         ]
         
 class Alternatif(models.Model):
-    nimA = models.TextField()
+    nimA = models.TextField(unique=True)
     namaA = models.TextField()
+    
     
     def __str__(self):
         return self.nimA
     
     class Meta:
         verbose_name_plural = 'Alternatif'
+        constraints = [
+            models.UniqueConstraint(fields=['nimA'], name='unique_nimA')
+        ]
         
 class SubAlternatif(models.Model):
     codeNim = models.ForeignKey(Alternatif, on_delete=models.CASCADE)
@@ -76,10 +81,72 @@ class BobotKonsistensi(models.Model):
     k3 = models.FloatField(default=0, blank=True, null=True)
     k4 = models.FloatField(default=0, blank=True, null=True) 
     bobotkons = models.FloatField(default=0, blank=True, null=True)
-     # Sesuaikan dengan tipe data yang sesuai
+  
 
     def __str__(self):
         return self.codeBF.namaK
     
     class Meta:
         verbose_name_plural = 'Bobot-konsistensi'
+# Topsis
+class NormalisasiTopsis(models.Model):
+    namaAlter = models.ForeignKey(SubAlternatif, on_delete=models.CASCADE)
+    k1 = models.FloatField(default=0, blank=True, null=True)
+    k2 = models.FloatField(default=0, blank=True, null=True)
+    k3 = models.FloatField(default=0, blank=True, null=True)
+    k4 = models.FloatField(default=0, blank=True, null=True)  
+
+    def __str__(self):
+        return self.namaAlter.namaSa
+    
+    class Meta:
+        verbose_name_plural = 'Normalisasi-Topsis'
+
+class NormalBobotTopsis(models.Model):
+    nimAlter = models.ForeignKey(Alternatif, on_delete=models.CASCADE, to_field='nimA', unique=False)
+    k1 = models.FloatField(default=0, blank=True, null=True)
+    k2 = models.FloatField(default=0, blank=True, null=True)
+    k3 = models.FloatField(default=0, blank=True, null=True)
+    k4 = models.FloatField(default=0, blank=True, null=True)  
+
+    def __str__(self):
+        return self.nimAlter
+    
+    class Meta:
+        verbose_name_plural = 'Normalisasi-Bobot-Topsis'
+
+class TopsisSolusi(models.Model):
+    status = models.CharField(max_length=255)
+    k1 = models.FloatField(default=0, blank=True, null=True)
+    k2 = models.FloatField(default=0, blank=True, null=True)
+    k3 = models.FloatField(default=0, blank=True, null=True)
+    k4 = models.FloatField(default=0, blank=True, null=True)  
+
+    def __str__(self):
+        return self.status
+    
+    class Meta:
+        verbose_name_plural = 'Topsis-Solusi'
+        
+class JarakPrefTopsis(models.Model):
+    nimAlter = models.ForeignKey(Alternatif, on_delete=models.CASCADE, to_field='nimA', unique=False)
+    positif = models.FloatField(default=0, blank=True, null=True)
+    negatif = models.FloatField(default=0, blank=True, null=True)
+    preferensi = models.FloatField(default=0, blank=True, null=True)  
+
+    def __str__(self):
+        return self.nimAlter
+    
+    class Meta:
+        verbose_name_plural = 'Jarak-Pref-Topsis'
+        
+class RankingTopsis(models.Model):
+    nimAlter = models.ForeignKey(Alternatif, on_delete=models.CASCADE, to_field='nimA', unique=False)
+    preferensi = models.FloatField(default=0, blank=True, null=True)
+    rank = models.IntegerField(default=0, blank=True, null=True)
+    
+    def __str__(self):
+        return self.nimAlter 
+    
+    class Meta:
+        verbose_name_plural = 'Ranking-Topsis'

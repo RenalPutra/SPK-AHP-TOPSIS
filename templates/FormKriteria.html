@@ -41,6 +41,30 @@
                       value="{{krit_value.namaK}}"
                     />
                   </div>
+                  <div class="col-md-4">
+                    <label for="NamaK">Kelas</label>
+                  </div>
+                  <div class="col-md-8 form-group">
+                    <select
+                      class="form-select"
+                      name="kelasK"
+                      aria-label="Default select example"
+                    >
+                      {% if krit_value.kelasK == "Benefit" %}
+                      <option value="Benefit" selected>Benefit</option>
+                      <option value="Cost">Cost</option>
+
+                      {% elif krit_value.kelasK == "Cost" %}
+                      <option value="Cost" selected>Cost</option>
+                      <option value="Benefit">Benefit</option>
+                      {% else %}
+
+                      <option selected>Select Kelas</option>
+                      <option value="Benefit">Benefit</option>
+                      <option value="Cost">Cost</option>
+                      {% endif %}
+                    </select>
+                  </div>
                   <div class="col-sm-12 d-flex pt-4">
                     <button type="button" class="btn btn-danger mb-1 me-auto">
                       <a
