@@ -16,4 +16,9 @@ urlpatterns = [
     path('subalternatif/edit/<int:id>', formEditSubAlternatif, name='editsubalternatif'),
     path('ahptopsis/', hasilahptopsis, name='hasilahptopsis'),
     path('login', login, name='login'),
+    path("controluser", controluser, name="controluser"),
+    path("logout", logout_view, name="logout"),
+    path("register", register, name="register"),
+    path("edit_user/<int:id>", edit_user, name="edit_user"),
+    path("hapususer/<int:id>", hapususers, name="hapususer"),
 ]

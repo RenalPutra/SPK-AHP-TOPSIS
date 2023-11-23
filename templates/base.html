@@ -107,8 +107,31 @@
               </div>
             </div>
           </div>
+
           <div class="sidebar-menu">
             <ul class="menu">
+              <li class="sidebar-item has-sub">
+                <a href="#" class="sidebar-link">
+                  {% if user.is_authenticated %}
+                  <i class="bi bi-people-fill"></i>
+                  <span>{{ user.username }}</span>
+
+                  {% else %}
+                  <!-- Tampilkan sesuatu jika pengguna tidak terautentikasi -->
+                  <p>Silakan login</p>
+                  {% endif %}
+                </a>
+                <ul class="submenu">
+                  <li class="submenu-item">
+                    <a href="{% url 'controluser' %}" class="submenu-link"
+                      >Control User</a
+                    >
+                  </li>
+                  <li class="submenu-item">
+                    <a href="{% url 'logout' %}" class="submenu-link">Logout</a>
+                  </li>
+                </ul>
+              </li>
               <li class="sidebar-title">Menu</li>
 
               <li class="sidebar-item has-sub">
@@ -149,7 +172,7 @@
                   </li>
                 </ul>
               </li>
-              <li class="sidebar-item ">
+              <li class="sidebar-item">
                 <a href="{% url 'hasilahptopsis' %}" class="sidebar-link">
                   <i class="bi bi-stack"></i>
                   <span>Perhitungan</span>

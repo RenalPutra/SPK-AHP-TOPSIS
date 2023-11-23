@@ -1,0 +1,104 @@
+{% extends "base.html" %} {% load static %}{% block content %}
+<!DOCTYPE html>
+  <body>
+    <section class="section">
+        <div class="card">
+        <div class="card-header">
+            <h4 class="card-title">Basic Inputs</h4>
+        </div>
+
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12 center">
+                    <form method="post" action="{% url 'register' %}">
+                        {% csrf_token %}
+        
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="username"
+                                name="username"
+                                placeholder="Enter Username"
+                                required
+                            />
+                        </div>
+        
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input
+                                type="email"
+                                class="form-control"
+                                id="email"
+                                name="email"
+                                placeholder="Enter Email"
+                                required
+                            />
+                        </div>
+        
+                        <div class="form-group">
+                            <label for="first_name">First Name</label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="first_name"
+                                name="first_name"
+                                placeholder="Enter First Name"
+                                required
+                            />
+                        </div>
+        
+                        <div class="form-group">
+                            <label for="last_name">Last Name</label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="last_name"
+                                name="last_name"
+                                placeholder="Enter Last Name"
+                                required
+                            />
+                        </div>
+        
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input
+                                type="password"
+                                class="form-control"
+                                id="password"
+                                name="password"
+                                placeholder="Enter Password"
+                                required
+                            />
+                        </div>
+        
+                        <div class="form-group">
+                            <label for="role">Role</label>
+                            <select
+                                class="form-control"
+                                id="role"
+                                name="role"
+                                required
+                            >
+                                <option value="superadmin">Super Admin</option>
+                                <option value="regular">Regular User</option>
+                            </select>
+                        </div>
+        
+                        <button type="submit" class="btn btn-primary">Register</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        </div>
+    </section>
+       
+    <script src="assets/static/js/components/dark.js"></script>
+    <script src="assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+
+    <script src="assets/compiled/js/app.js"></script>
+  </body>
+</html>
+{% endblock content %}

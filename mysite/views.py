@@ -1,16 +1,55 @@
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth import login as auth_login, authenticate, login
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.hashers import make_password
+from django.contrib.auth.hashers import make_password
+from django.contrib.auth import authenticate, login
+from django.contrib.auth import login as auth_login
 from django.shortcuts import render, redirect
-import math
-import numpy as np
+from django.contrib.auth.models import User
+from django.contrib.auth import logout
 from django.contrib import messages
+from spk import views
 from .models import *
+import numpy as np
+import math
 
+
+
+@login_required
+def dashboard(request):
+    template_name = "base.html"
+    user = User.objects.all()
+    context = {
+        'user': user,
+    }
+    return render(request, template_name, context)
+
+@login_required
 def index(request):
     template_name = "index.html"
+    user = User.objects.all()
+    user_count = User.objects.count()
+    alternatif = Alternatif.objects.count()
+    kriteria = Kriteria.objects.count()
+    
+    top_mahasiswa = RankingTopsis.objects.order_by('rank')[:10]
+    if request.user.is_authenticated:
+        user = request.user
+    else:
+        user = None
     context = {
-        'nama': 'SPK AHP-TOPSIS'
+        'nama': 'SPK AHP-TOPSIS',
+        'user': user,
+        'user_count' : user_count,
+        'alternatif' : alternatif,
+        'kriteria' : kriteria,
+        'top_mahasiswa': top_mahasiswa,
         }
     return render(request, template_name, context)
 
+@login_required
 def kriteriaTabel(request):
     template_name = "kriteria.html"
     kriteria = Kriteria.objects.all()
@@ -20,6 +59,7 @@ def kriteriaTabel(request):
     }
     return render(request, template_name, context)
 
+@login_required
 def subkriteriaTabel(request):
     template_name = "subkriteria.html"
     kriteria = Kriteria.objects.all()
@@ -99,6 +139,7 @@ def formKriteria(request):
            namaK=namaKriteria, 
            kelasK=kelasK
         )
+        messages.success(request, 'Kriteria berhasil ditambahkan!')
         return redirect(kriteriaTabel)
     context = {
         'nama' : 'Form Input Kriteria'
@@ -117,7 +158,7 @@ def formEditKriteria(request, id):
         kriteria_id.namaK = namaKriteria
         kriteria_id.kelasK = kelasK
         kriteria_id.save()
-        
+        messages.success(request, "Kriteria berhasil diperbarui")
         return redirect(kriteriaTabel)
     context = {
         'nama' : 'Form Edit Kriteria',
@@ -150,6 +191,7 @@ def formAlternatif(request):
            namaA=namaA, 
           
         )
+        messages.success(request, 'Alternatif berhasil ditambahkan!')
         return redirect(alternatifTabel)
     context = {
         'nama' : 'Form Input Alternatif'
@@ -168,6 +210,7 @@ def formEditAlternatif(request, id):
         alter_id.namaA =namaA
        
         alter_id.save()
+        messages.success(request, 'Alternatif berhasil diubah!')
         return redirect(alternatifTabel)
     context = {
         'nama' : 'Form Input Alternatif',
@@ -216,6 +259,7 @@ def formEditSubAlternatif(request, id):
         subalter_id.k3sa = k3
         subalter_id.k4sa = k4
         subalter_id.save()
+        messages.success(request, 'Sub Alternatif berhasil diubah!')
         return redirect(subAlternatifTabel)
     context = {
         'nama' : 'Edit Sub-Alternatif',
@@ -645,12 +689,138 @@ def hasilahptopsis(request):
     }
     return render(request, template_name, context)
 
-
-
 def login(request):
     template_name = "login.html"
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            auth_login(request, user)
+            messages.success(request, "You have been logged in successfully")
+            return redirect(index)
+        else:
+            messages.error(request, "Invalid username or password")
+            return redirect(views.welcome)
+    else:
+        return render(request, template_name)
+    
+
+def logout_view(request):
+    logout(request)
+    messages.success(request, "You have been logged out successfully")
+    return redirect(views.welcome)
+
+
+def controluser(request):
+    template_name = "controluser.html"
+    user = User.objects.all()
+    id_user = 0
     context = {
-        'nama' : 'Form Input',
-        
+        'user': user,
+        'id_user': id_user
     }
     return render(request, template_name, context)
+
+
+def register(request):
+    template_name = "formuser.html"
+    
+    if request.method == 'POST':
+        first_name = request.POST['first_name']
+        last_name = request.POST['last_name']
+        username = request.POST['username']
+        email = request.POST['email']
+        get_password = request.POST['password']
+        role = request.POST.get('role')  # Ambil peran dari formulir
+        print(role)
+        
+        if User.objects.filter(username=username).exists():
+            messages.error(request, "Username sudah ada")
+            return redirect('controluser')
+        elif User.objects.filter(email=email).exists():
+            messages.error(request, "Email sudah ada")
+            return redirect('controluser')
+        else:
+            user = User.objects.create(
+                username=username,
+                password=make_password(get_password),
+                first_name=first_name,
+                last_name=last_name,
+                email=email,
+            )
+            
+            # Atur peran pengguna berdasarkan input formulir
+            if role == 'superadmin':
+                user.is_staff = True
+                user.is_superuser = True
+            else:
+                user.is_staff = False
+                user.is_superuser = False
+
+            user.save()
+            messages.success(request, "Pengguna berhasil dibuat")
+
+            # Otentikasi pengguna setelah pendaftaran
+            authenticated_user = authenticate(request, username=username, password=get_password)
+
+            if authenticated_user is not None:
+                auth_login(request, authenticated_user)  # Use auth_login instead of login
+                messages.success(request, "Registrasi berhasil.")
+                return redirect(views.welcome)
+            else:
+                messages.error(request, "Registrasi gagal. Silakan coba lagi.")
+
+    return render(request, template_name)
+
+# views.py
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login as auth_login
+from django.contrib.auth.models import User
+from django.contrib.auth.hashers import make_password
+from django.contrib import messages
+
+def edit_user(request, id):
+    user = User.objects.get(pk=id)
+
+    if request.method == 'POST':
+        # Proses menyimpan perubahan, seperti yang dilakukan pada register
+        first_name = request.POST['first_name']
+        last_name = request.POST['last_name']
+        username = request.POST['username']
+        email = request.POST['email']
+        get_password = request.POST['password']
+        role = request.POST.get('role')
+
+        if User.objects.filter(username=username).exclude(pk=id).exists():
+            messages.error(request, "Username sudah ada")
+            return redirect('controluser')
+        elif User.objects.filter(email=email).exclude(pk=id).exists():
+            messages.error(request, "Email sudah ada")
+            return redirect('controluser')
+        else:
+            user.username = username
+            user.password = make_password(get_password)
+            user.first_name = first_name
+            user.last_name = last_name
+            user.email = email
+
+            if role == 'superadmin':
+                user.is_staff = True
+                user.is_superuser = True
+            else:
+                user.is_staff = False
+                user.is_superuser = False
+
+            user.save()
+            messages.success(request, "Pengguna berhasil diperbarui")
+            return redirect('controluser')
+
+    return render(request, 'edituser.html', {'user': user})
+
+def hapususers(request, id):
+    User.objects.get(id=id).delete()
+    messages.success(request, "User has ben delete")
+    return redirect(controluser)
+

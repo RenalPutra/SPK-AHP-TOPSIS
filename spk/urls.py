@@ -1,9 +1,10 @@
 from django.contrib import admin
 from django.urls import path, include
-from mysite.views import index
+from .views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('mysite.urls')),
+    path("", welcome, name="welcome"),
+    path("dashboard/", include("mysite.urls")),
 ]
 
